@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useLazyLoadQuery, useFragment } from "react-relay";
+import { useFragment, usePreloadedQuery, PreloadedQuery } from "react-relay";
 import { graphql } from "relay-runtime";
 import Image from "./Image";
 import Timestamp from "./Timestamp";
@@ -8,8 +8,8 @@ import type { PosterDetailsHovercardContentsQuery as QueryType } from "./__gener
 import type { PosterDetailsHovercardContentsBodyFragment$key } from "./__generated__/PosterDetailsHovercardContentsBodyFragment.graphql";
 
 export const PosterDetailsHovercardContentsQuery = graphql`
-  query PosterDetailsHovercardContentsQuery {
-    node(id: "1") {
+  query PosterDetailsHovercardContentsQuery($posterID: ID!) {
+    node(id: $posterID) {
       ... on Actor {
         ...PosterDetailsHovercardContentsBodyFragment
       }
@@ -17,10 +17,14 @@ export const PosterDetailsHovercardContentsQuery = graphql`
   }
 `;
 
-export default function PosterDetailsHovercardContents({}: {}): React.ReactElement {
-  const data = useLazyLoadQuery<QueryType>(
+export default function PosterDetailsHovercardContents({
+  queryRef
+}: {
+  queryRef: PreloadedQuery<QueryType>;
+}): React.ReactElement {
+  const data = usePreloadedQuery<QueryType>(
     PosterDetailsHovercardContentsQuery,
-    {}
+    queryRef
   );
   return (
     <div className="posterHovercard">
